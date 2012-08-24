@@ -1,0 +1,6 @@
+
+
+#ignore /gen and /bin folders
+
+gen/
+bin/
