@@ -8,6 +8,7 @@ from push.views import HomeView
 from push.views import LogoutView
 from push.views import SignupView
 from push.views import RegIdSubmitView
+from push.views import APILoginView
 
 from django.contrib.auth.decorators import login_required
 
@@ -19,6 +20,8 @@ urlpatterns = patterns('',
     url(r'^login$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout$', LogoutView.as_view(), name='logout'),
     url(r'^submitregid$', login_required(RegIdSubmitView.as_view()), name='test-regidsubmit'),
+    url(r'^apilogin1$', APILoginView.as_view(), name='apilogin1'),
+    
 
     # url(r'^pushit/', include('pushit.foo.urls')),
 

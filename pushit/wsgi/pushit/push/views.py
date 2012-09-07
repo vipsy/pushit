@@ -2,13 +2,21 @@
 from django.views.generic import TemplateView
 from django.views.generic import RedirectView
 from django.views.generic import FormView
+from django.views.generic import View
 from django.contrib.auth import logout
+
+from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_POST
 
 from push.forms import SignupForm
 from push.forms import RegIdSubmitForm
 from push.forms import HomeForm
 
+
 import sys
+from django.contrib.auth.decorators import login_required
+
 
 class HomeView(FormView):
     template_name = "home.html"
@@ -75,4 +83,14 @@ class RegIdSubmitView(FormView):
 
 class PushITView(TemplateView):
     template_name = "home.html"
+    
 
+class APILoginView(View):
+    
+    def dispatch(self, *args, **kwargs):
+        return super(APILoginView, self).dispatch(*args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return HttpResponse()
+        
+    
