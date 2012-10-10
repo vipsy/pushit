@@ -15,17 +15,21 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 
+import com.idmission.apps.core.Idm;
 import com.selesca.android.pushit.utils.AppSettings;
 
 
 import android.os.AsyncTask;
+import android.os.Build;
+import android.provider.Settings.Secure;
 
 @SuppressWarnings("rawtypes")
-public class WSLogin extends AsyncTask {
+public class WSRegister extends AsyncTask {
 
-	public WSLogin(String username, String password) {
+	public WSRegister(String username, String password, String regId) {
 		this.username = username;
 		this.password = password;
+		this.regId = regId;
 	}
 
 	public String getStatusMessage() {
@@ -43,6 +47,9 @@ public class WSLogin extends AsyncTask {
 	@Override
 	protected Object doInBackground(Object... arg0) {
 		
+		String android_id = Secure.getString(Idm.getContext().getContentResolver(),
+                Secure.ANDROID_ID); 
+		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), TIMEOUT_MS);
 		HttpConnectionParams.setSoTimeout(httpClient.getParams(), TIMEOUT_MS);
@@ -50,6 +57,10 @@ public class WSLogin extends AsyncTask {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();  
 		nameValuePairs.add(new BasicNameValuePair("username", username));  
 		nameValuePairs.add(new BasicNameValuePair("password", password)); 
+		nameValuePairs.add(new BasicNameValuePair("device_model", Build.MODEL)); 
+		nameValuePairs.add(new BasicNameValuePair("device_oem", Build.MANUFACTURER)); 
+		nameValuePairs.add(new BasicNameValuePair("android_id", android_id)); 
+		nameValuePairs.add(new BasicNameValuePair("gcm_regid", AppSettings.getGCMRegId())); 
 		
 		// etc...
 		try {
@@ -83,10 +94,11 @@ public class WSLogin extends AsyncTask {
 	
 	//Private STUFF
 	private static final int TIMEOUT_MS = 20000;
-	private static final String  url = AppSettings.BASE_URL + "/api/login";
+	private static final String  url = AppSettings.BASE_URL + "/api/register";
 	
 	private String username;
 	private String password;
+	private String regId;
 	private int statusCode;
 	private String statusMessage;
 

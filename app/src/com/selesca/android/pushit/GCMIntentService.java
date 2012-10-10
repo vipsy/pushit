@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.selesca.android.pushit.utils.AppSettings;
+import com.selesca.android.pushit.ws.WSRegister;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
@@ -39,7 +40,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Idm.setContext(context);
 		Log.i("PUSHIT", "onRegistered:  regId= "+regId);
 		AppSettings.setGCMRegId(regId);
-		//Toast.makeText(getApplicationContext(), "RegID "+regId, Toast.LENGTH_LONG).show();
+		new WSRegister(AppSettings.getUsername(), AppSettings.getPassword(), AppSettings.getGCMRegId() ).execute();
 	}
 
 	
@@ -47,7 +48,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	protected void onUnregistered(Context context, String regId) {
 		Idm.setContext(context);
 		AppSettings.setGCMRegId("");
-		//Toast.makeText(getApplicationContext(), "Unregistered RegID "+regId, Toast.LENGTH_LONG).show();
+		new WSRegister(AppSettings.getUsername(), AppSettings.getPassword(), "").execute();
 	}
 	
 
