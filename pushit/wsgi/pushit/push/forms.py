@@ -7,6 +7,7 @@ from django.contrib.auth.models import SiteProfileNotAvailable
 import json
 import urllib2
 import sys
+from django.core import exceptions
 
 class SignupForm(forms.Form):
     login_id = forms.CharField(max_length=30)
@@ -20,7 +21,8 @@ class SignupForm(forms.Form):
             
 class HomeForm(forms.Form):
     device= forms.ChoiceField(label='Select device',choices=(), initial="", required=True)
-    message = forms.CharField(widget=forms.Textarea(), max_length=1000, required=True)
+    data = forms.CharField(widget=forms.Textarea(), max_length=1000, required=True)
+    
 
     def __init__(self, user, *args, **kwargs):
         super(HomeForm, self).__init__(*args, **kwargs)
@@ -47,10 +49,18 @@ class HomeForm(forms.Form):
         GCM_URL = 'https://android.googleapis.com/gcm/send'
         GCM_API_KEY = 'AIzaSyDzNpkQcpzyrsDFNP7nNeaUeugonX0hK-g'
         
-        print >> sys.stderr,  self.cleaned_data
+        print >> sys.stderr,  'in HomeForm:process '
         
-        cd = self.cleaned_data
-        device_id = cd['device']
+        cd = self.data
+        try:
+            device_id = cd['device']
+            message = cd['data']
+            action_id = cd['action_id']
+            
+        except LookupError as err:
+            print >> sys.stderr, 'post request with missing params\n  %s' % str(err)
+            return
+        
         try:
             device = Devices.objects.get(id=device_id)
             try:
@@ -58,6 +68,7 @@ class HomeForm(forms.Form):
                 profile.default_device = device
                 profile.save()
             except (ObjectDoesNotExist, SiteProfileNotAvailable) as e :
+                print >> sys.stderr, 'Error in user-profile' % str(e)
                 pass
                     
             headers = {}
@@ -66,9 +77,9 @@ class HomeForm(forms.Form):
                     
             data = {}
             data["registration_ids"] = [device.gcm_regid]
-            data["data"] = {"key1" : "%s" % cd["message"] }
-            data["collapse_key"] = "common_message"  #mandatory since 'time_to_live' is used
-            data["time_to_live"] = 600
+            data["data"] = { 'action_id':action_id, 'data':"%s" % message }
+            data["collapse_key"] = action_id  #mandatory since 'time_to_live' is used
+            data["time_to_live"] = 10*60 #in seconds #x*60=x minutes  
     
             data = json.dumps(data)
             print >> sys.stderr, data

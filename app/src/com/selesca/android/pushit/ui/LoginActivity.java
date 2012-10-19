@@ -8,7 +8,7 @@ import com.selesca.android.pushit.R;
 import com.selesca.android.pushit.utils.AppSettings;
 import com.selesca.android.pushit.ws.AsyncTaskListener;
 import com.selesca.android.pushit.ws.WSLogin;
-
+import com.selesca.android.pushit.ws.WSRegister;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -58,6 +58,7 @@ public class LoginActivity extends BaseActivity implements AsyncTaskListener {
 		  GCMRegistrar.register(getApplicationContext(), AppSettings.SENDER_ID);
 		} else {
 		  Log.v("PUSHIT", "Already registered");
+		 
 		}
 		
 		super.onCreate(savedInstanceState);
@@ -74,7 +75,8 @@ public class LoginActivity extends BaseActivity implements AsyncTaskListener {
 				
 				AppSettings.setUsername(username);
 				AppSettings.setPassword(password);
-				
+				new WSRegister(AppSettings.getUsername(), AppSettings.getPassword(), AppSettings.getGCMRegId() ).execute();
+
 				this.finish();
 			}else {
 				Toast.makeText(this, "Login failed: Response="+wsLogin.getStatusMessage(), 
@@ -83,5 +85,9 @@ public class LoginActivity extends BaseActivity implements AsyncTaskListener {
 		}
 		
 	}
+	
+/****************************************************************************************/
+
+	
 
 }

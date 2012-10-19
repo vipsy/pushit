@@ -10,7 +10,11 @@ Welocome {{ user.username }} to PushIT home.
 
 <form action="/home" method="post">{% csrf_token %}
 {{form.as_p}}
-<input type="submit" value="Submit" />
-</form>
+<button type="submit" name="action_id" value="sms">SMS</button>
+<button type="submit" name="action_id" value="email">Email</button>
+<button type="submit" name="action_id" value="call">Call</button>
+<button type="submit" name="action_id" value="browse">Browse</button>
+<button type="submit" name="action_id" value="copy">Copy/Paste</button>
 
+</form>
 {% endblock %}

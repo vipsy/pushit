@@ -19,6 +19,7 @@ import com.selesca.android.pushit.utils.AppSettings;
 
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 @SuppressWarnings("rawtypes")
 public class WSLogin extends AsyncTask {
@@ -57,6 +58,7 @@ public class WSLogin extends AsyncTask {
 			HttpResponse response = httpClient.execute(httpPost);
 			statusCode = response.getStatusLine().getStatusCode();
 			statusMessage = response.getStatusLine().getReasonPhrase();
+			Log.i(TAG, "statusResponse: "+response.getStatusLine());
 			
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -91,4 +93,6 @@ public class WSLogin extends AsyncTask {
 	private String statusMessage;
 
 	private AsyncTaskListener asyncTaskListener;
+	
+	private static final String TAG = "PUSHIT: "+ WSLogin.class.getSimpleName() + ": ";
 }
